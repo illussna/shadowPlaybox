@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#faf7e8"
+        android:alpha="0.1"/>
+
+    <RelativeLayout android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:background="@drawable/title_bg">
+
+        <ImageButton android:id="@+id/home_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/home_btn"/>
+
+        <TextView android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:maxWidth="260dp"
+            android:gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:textSize="22sp"
+            android:textColor="#000"
+            android:text="해와 달이된 오누이"/>
+
+        <ImageButton android:id="@+id/info_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:background="@null"
+            android:src="@drawable/info_btn"/>
+
+
+    </RelativeLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title_bar"
+        android:layout_above="@+id/bottom_layout">
+    </android.support.v4.view.ViewPager>
+
+    <RelativeLayout android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:layout_alignParentBottom="true">
+        <TextView android:id="@+id/arrow_left_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre"
+            android:background="@drawable/list_btn"
+            android:drawableLeft="@drawable/arrow_left"
+            android:drawablePadding="11dp"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:layout_marginRight="15dp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#fff"/>
+
+        <TextView android:id="@+id/arrow_right_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/next"
+            android:drawableRight="@drawable/arrow_right"
+            android:drawablePadding="11dp"
+            android:background="@drawable/list_btn"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#fff"/>
+    </RelativeLayout>
+</RelativeLayout>

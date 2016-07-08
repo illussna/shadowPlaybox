@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">그림자 공연 상자</string>
+    <string name="action_settings">Settings</string>
+    <string name="run">실행</string>
+    <string name="font_size">글자 크기</string>
+    <string name="sound_play">음악재생</string>
+    <string name="flashlight">후레쉬 사용</string>
+    <string name="play_start">공연 시작</string>
+    <string name="pre">이전</string>
+    <string name="next">다음</string>
+    <string name="info_text_btn_1">공연진행 TIP</string>
+    <string name="info_text_btn_2">공연진행 동영상 보기</string>
+    <string name="info_text_btn_3">인형극의 교육적가치 알아보기</string>
+    <string name="info_bottom_msg">그림자 공연 상자 앱은\n인천콘텐츠코리아랩 융합콘텐츠제작지원사업으로\n제작되었습니다.</string>
+    <string name="first_contents">첫번째 화면 입니다.</string>
+    <string name="last_contents">마지막 화면 입니다.</string>
+    <string name="contents_ready">컨텐츠를 준비중 입니다.</string>
+</resources>
