@@ -1,18 +1,20 @@
 package shadow.play.box;
 
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.hardware.Camera;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
 import android.text.Html;
+import android.text.Layout;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +35,7 @@ import shadow.play.box.utils.Finder;
 import shadow.play.box.utils.SharedUtil;
 
 public class ContentsActivity extends BaseActivity {
-    private MediaPlayer mp;
+
     @FindView(id = R.id.title)
     private TextView title;
     @FindView(id = R.id.arrow_left_btn, onClick = "onClickLeft")
@@ -42,12 +44,12 @@ public class ContentsActivity extends BaseActivity {
     private TextView arrow_right_btn;
     @FindView(id = R.id.home_btn, onClick = "onClickHome")
     private ImageButton home_btn;
-    @FindView(id = R.id.info_btn, onClick = "onClickInfo")
-    private ImageButton info_btn;
     @FindView(id = R.id.text1)
     private TextView text1;
     @FindView(id = R.id.text2)
     private TextView text2;
+    @FindView(id = R.id.temp)
+    private TextView temp;
     @FindView(id = R.id.pager)
     private ViewPager pager;
 
@@ -57,7 +59,9 @@ public class ContentsActivity extends BaseActivity {
     private Camera camera;
 
     private int currentPosition;
-    private int textLine;
+    private String txt;
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,17 +69,11 @@ public class ContentsActivity extends BaseActivity {
 
         setContentView(R.layout.activity_content);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage(getString(R.string.wait));
         content = (Content) getIntent().getSerializableExtra("content");
         contents = new ArrayList<String>();
-
-        if(Const.textSize == 15) {
-            textLine = 15;
-        }else if(Const.textSize == 19) {
-            textLine = 8;
-        }else {
-            textLine = 3;
-        }
-
 
         init();
 
@@ -104,48 +102,71 @@ public class ContentsActivity extends BaseActivity {
     }
 
     private void init() {
-        pagerAdapter = new ContentPagerAdapter(getSupportFragmentManager());
         contents = new ArrayList<String>();
-        pager.setAdapter(pagerAdapter);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
+        temp.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
         title.setText(content.getName());
-        arrow_left_btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        arrow_right_btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        boolean sound = SharedUtil.getSharedBooleanValue(this, Const.APP_NAME, Const.SHARED_PLAY);
-        if(sound) {
-            try {
-                AssetFileDescriptor afd1 = getAssets().openFd("1.mp3");
-                AssetFileDescriptor afd2 = getAssets().openFd("2.mp3");
-                AssetFileDescriptor afd3 = getAssets().openFd("3.mp3");
-                mp = new MediaPlayer();
-                if(title.getText().toString().equals("해와 달이된 오누이")) {
-                    mp.setDataSource(afd1.getFileDescriptor(), afd1.getStartOffset(), afd1.getLength());
-                    mp.prepare();
-                    afd1.close();
-                }
-                else if(title.getText().toString().equals("빨간망토")){
-                    mp.setDataSource(afd2.getFileDescriptor(), afd2.getStartOffset(), afd2.getLength());
-                    mp.prepare();
-                    afd2.close();
-                }
-                else {
-                    mp.setDataSource(afd3.getFileDescriptor(), afd3.getStartOffset(), afd3.getLength());
-                    mp.prepare();
-                    afd3.close();
-                }
+        arrow_left_btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        arrow_right_btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
 
 
-                mp.start();
-            } catch (IOException e) {
+        txt = getText();
+
+        progressDialog.show();
+
+        temp.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
-        }
-        getText();
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            int lineHeight = temp.getLineHeight();
+                            int viewHeight = (int) (temp.getHeight()
+                                    - TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics()));
+                            int lineCount = (viewHeight / lineHeight);
+
+                            Layout layout = temp.getLayout();
+                            int end = 0;
+                            end = layout.getLineEnd(lineCount - 1);
+                            String displayed = txt.substring(0, end);
+                            //Log.e(Const.APP_NAME, displayed);
+                            contents.add(displayed);
+                            txt = txt.substring(displayed.length());
+                            temp.setText(txt);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            progressDialog.dismiss();
+                            temp.setVisibility(View.GONE);
+                            contents.add(txt);
+                            pagerAdapter = new ContentPagerAdapter(getSupportFragmentManager());
+                            pager.setAdapter(pagerAdapter);
+                        }
+                    }
+                }, 200);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                temp.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
+            }
+        });
+
+        temp.setText(txt);
+
     }
 
     public void flashLightOn() {
         camera = Camera.open();
-        Camera.Parameters params = camera.getParameters();
-        camera.setParameters(params);
+        if (camera != null) {
+            Camera.Parameters params = camera.getParameters();
+            camera.setParameters(params);
+        }
         Camera.Parameters p = camera.getParameters();
         p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
         camera.setParameters(p);
@@ -180,6 +201,40 @@ public class ContentsActivity extends BaseActivity {
         pager.setCurrentItem(currentPosition);
     }
 
+//    private String getText() {
+//        BufferedReader br = null;
+//        StringBuffer sb = new StringBuffer();
+//        try {
+//            AssetManager assetMgr = getAssets();
+//            InputStream is = assetMgr.open(content.getFileName());
+//            br = new BufferedReader(new InputStreamReader(is));
+//            String str = null;
+//            int count = 0;
+//            while ((str = br.readLine()) != null) {
+//                sb.append(str.trim() + "\n");
+//                count++;
+//                if(count % textLine == 0) {
+//                    contents.add(sb.toString());
+//                    sb.setLength(0);
+//                    count = 0;
+//                }
+//            }
+//            if(sb.length() > 0) {
+//                contents.add(sb.toString());
+//            }
+//        } catch (IOException e) {
+//        } finally {
+//            if (br != null) {
+//                try {
+//                    br.close();
+//                } catch (IOException e) {
+//                }
+//            }
+//            pagerAdapter.notifyDataSetChanged();
+//        }
+//        return sb.toString();
+//    }
+
     private String getText() {
         BufferedReader br = null;
         StringBuffer sb = new StringBuffer();
@@ -188,20 +243,11 @@ public class ContentsActivity extends BaseActivity {
             InputStream is = assetMgr.open(content.getFileName());
             br = new BufferedReader(new InputStreamReader(is));
             String str = null;
-            int count = 0;
             while ((str = br.readLine()) != null) {
-                sb.append(str.trim() + "\n");
-                count++;
-                if(count % textLine == 0) {
-                    contents.add(sb.toString());
-                    sb.setLength(0);
-                    count = 0;
-                }
-            }
-            if(sb.length() > 0) {
-                contents.add(sb.toString());
+                sb.append(str +  "\n");
             }
         } catch (IOException e) {
+
         } finally {
             if (br != null) {
                 try {
@@ -209,7 +255,7 @@ public class ContentsActivity extends BaseActivity {
                 } catch (IOException e) {
                 }
             }
-            pagerAdapter.notifyDataSetChanged();
+
         }
         return sb.toString();
     }
@@ -219,10 +265,6 @@ public class ContentsActivity extends BaseActivity {
         finish();
     }
 
-    public void onClickInfo(View view) {
-        startActivity(new Intent(this, InfomationActivity.class));
-        finish();
-    }
     @Override
     public void onBackPressed() {
         onClickHome(null);
@@ -262,7 +304,6 @@ public class ContentsActivity extends BaseActivity {
         }
     }
 
-    @SuppressLint("ValidFragment")
     private static class ContentFragment extends Fragment {
 
         @FindView(id = R.id.text)
@@ -287,71 +328,11 @@ public class ContentsActivity extends BaseActivity {
             String[] str = {"I", "love", "you"};
             Finder.findView(this, getView());
 
-            text.setText(Html.fromHtml(content));
-            text.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+
+            text.setText(content);
+            text.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
 
         }
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(mp != null) {
-            mp.stop();
-            mp.release();
-        }
-    }
 
-    void getText2()
-    {
-        //progressDialog.show();
-
-//        temp.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            int lineHeight = temp.getLineHeight();
-//                            int viewHeight = (int) (temp.getHeight()
-//                                    - TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()));
-//                            int lineCount = viewHeight / lineHeight;
-//
-//                            Layout layout = temp.getLayout();
-//                            int end = 0;
-//                            if (layout.getLineCount() <= lineCount) {
-//                                end = layout.getLineEnd(layout.getLineCount());
-//                            } else {
-//                                end = layout.getLineEnd(lineCount - 1);
-//                            }
-//                            String displayed = html.substring(0, end);
-//                            Log.e(Const.APP_NAME, displayed);
-//                            contents.add(displayed);
-//
-//                            html = html.substring(displayed.length());
-//                            temp.setText(html);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            progressDialog.dismiss();
-//                            temp.setVisibility(View.GONE);
-//                            pagerAdapter = new ContentPagerAdapter(getSupportFragmentManager());
-//                            pager.setAdapter(pagerAdapter);
-//                        }
-//                    }
-//                }, 200);
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-//
-//        temp.setText(html);
-    }
 }

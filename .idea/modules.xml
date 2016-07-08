@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Shadows.iml" filepath="$PROJECT_DIR$/Shadows.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/shadowPlaybox.iml" filepath="$PROJECT_DIR$/shadowPlaybox.iml" />
     </modules>
   </component>
 </project>

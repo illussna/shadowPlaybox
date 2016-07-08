@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
 
@@ -33,21 +34,21 @@ public class MainActivity extends BaseActivity {
         Content content = new Content();
         content.setImageurl("@drawable/icon_01");
         content.setName("해와 달이된 오누이");
-        content.setFileName("1.html");
+        content.setFileName("1.txt");
         content.setBgName("1.mp3");
         contents.add(content);
 
         content = new Content();
         content.setImageurl("@drawable/icon_02");
         content.setName("빨간망토");
-        content.setFileName("2.html");
+        content.setFileName("2.txt");
         content.setBgName("1.mp3");
         contents.add(content);
 
         content = new Content();
         content.setImageurl("@drawable/icon_03");
         content.setName("개구리 왕자");
-        content.setFileName("3.html");
+        content.setFileName("3.txt");
         content.setBgName("1.mp3");
         contents.add(content);
 
@@ -98,9 +99,28 @@ public class MainActivity extends BaseActivity {
                 holder = (Holder) convertView.getTag();
             }
 
+
+
             holder.text.setText(content.getName());
-            holder.text.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-            holder.run_btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
+
+            if(holder.text.getText().equals("해와 달이된 오누이")) {
+                Drawable drawable = getResources().getDrawable(R.drawable.icon_01);
+                drawable.setBounds(0 ,0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                holder.text.setCompoundDrawables(drawable, null, null, null);
+            }
+            if(holder.text.getText().equals("빨간망토")) {
+                Drawable drawable = getResources().getDrawable(R.drawable.icon_02);
+                drawable.setBounds(0 ,0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                holder.text.setCompoundDrawables(drawable, null, null, null);
+            }
+            if(holder.text.getText().equals("개구리 왕자")) {
+                Drawable drawable = getResources().getDrawable(R.drawable.icon_03);
+                drawable.setBounds(0 ,0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                holder.text.setCompoundDrawables(drawable, null, null, null);
+            }
+
+
+
             holder.run_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

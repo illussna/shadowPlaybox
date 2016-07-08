@@ -60,13 +60,14 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (progress == 0) {
-                    Const.textView = 15;
+                    Const.textSize = 15;
                 } else if (progress == 1) {
-                    Const.textView = 19;
+                    Const.textSize = 19;
                 } else {
-                    Const.textView = 24;
+                    Const.textSize = 24;
                 }
                 SharedUtil.putShared(getApplicationContext(), Const.APP_NAME, Const.SHARED_TEXT_SIZE, Const.textSize);
+//                SharedUtil.putShared(getApplicationContext(), Const.APP_NAME, Const.SHARED_TEXT_VIEW, Const.textView);
                 SharedUtil.putShared(getApplicationContext(), Const.APP_NAME, Const.TEXT_PROGRESS, progress);
 
                 init();
@@ -105,11 +106,11 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void init() {
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        text1.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        text_play.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        light_text.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        play_start_btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        text1.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        text_play.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        light_text.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        play_start_btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
 
         title.setText(content.getName());
     }
