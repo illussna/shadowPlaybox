@@ -2,8 +2,10 @@ package shadow.play.box;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.hardware.Camera;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,6 +37,7 @@ import shadow.play.box.utils.Finder;
 import shadow.play.box.utils.SharedUtil;
 
 public class ContentsActivity extends BaseActivity {
+    private MediaPlayer mp;
 
     @FindView(id = R.id.title)
     private TextView title;
@@ -44,6 +47,8 @@ public class ContentsActivity extends BaseActivity {
     private TextView arrow_right_btn;
     @FindView(id = R.id.home_btn, onClick = "onClickHome")
     private ImageButton home_btn;
+    @FindView(id = R.id.info_btn, onClick = "onClickInfo")
+    private ImageButton info_btn;
     @FindView(id = R.id.text1)
     private TextView text1;
     @FindView(id = R.id.text2)
@@ -65,6 +70,7 @@ public class ContentsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_content);
@@ -102,6 +108,8 @@ public class ContentsActivity extends BaseActivity {
     }
 
     private void init() {
+        boolean sound = SharedUtil.getSharedBooleanValue(this, Const.APP_NAME, Const.SHARED_PLAY);
+
         contents = new ArrayList<String>();
         temp.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
@@ -133,7 +141,7 @@ public class ContentsActivity extends BaseActivity {
 
                             Layout layout = temp.getLayout();
                             int end = 0;
-                            end = layout.getLineEnd(lineCount - 1);
+                            end = layout.getLineEnd(lineCount - 2);
                             String displayed = txt.substring(0, end);
                             //Log.e(Const.APP_NAME, displayed);
                             contents.add(displayed);
@@ -156,7 +164,38 @@ public class ContentsActivity extends BaseActivity {
                 temp.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
             }
         });
+        if(sound) {
+            try {
+                Log.e("------",title.getText().toString());
+                if(content.getBgName().equals("1해와 달이된 오누이")) {
+                    AssetFileDescriptor afd = getAssets().openFd("1.mp3");
+                    mp = new MediaPlayer();
+                    mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    mp.prepare();
+                    afd.close();
+                    mp.start();
+                }
+                if(title.getText().toString().equals("빨간망토")) {
+                    AssetFileDescriptor afd = getAssets().openFd("2.mp3");
+                    mp = new MediaPlayer();
+                    mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    mp.prepare();
+                    afd.close();
+                    mp.start();
+                }
+                if(title.getText().toString().equals("개구리 왕자")) {
+                    AssetFileDescriptor afd = getAssets().openFd("3.mp3");
+                    mp = new MediaPlayer();
+                    mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    mp.prepare();
+                    afd.close();
+                    mp.start();
+                }
 
+
+            } catch (IOException e) {
+            }
+        }
         temp.setText(txt);
 
     }
@@ -264,7 +303,10 @@ public class ContentsActivity extends BaseActivity {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
-
+    public void onClickInfo(View view) {
+        startActivity(new Intent(this, InfomationActivity.class));
+        finish();
+    }
     @Override
     public void onBackPressed() {
         onClickHome(null);
@@ -292,7 +334,8 @@ public class ContentsActivity extends BaseActivity {
             if (fragments.containsKey(position)) {
                 return fragments.get(position);
             } else {
-                Fragment fragment = new ContentFragment(contents.get(position));
+                ContentFragment fragment = new ContentFragment();
+                fragment.setContent(contents.get(position));
                 fragments.put(position, fragment);
                 return fragment;
             }
@@ -304,19 +347,24 @@ public class ContentsActivity extends BaseActivity {
         }
     }
 
-    private static class ContentFragment extends Fragment {
+     public static class ContentFragment extends Fragment {
 
         @FindView(id = R.id.text)
         private TextView text;
 
         private String content;
+//
+//        public ContentFragment(String text) {
+//            super();
+//            this.content = text;
+//        }
 
-        public ContentFragment(String text) {
-            super();
-            this.content = text;
-        }
 
-        @Override
+         public void setContent(String content) {
+             this.content = content;
+         }
+
+         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             return inflater.inflate(R.layout.pager_item, null);
         }
@@ -334,5 +382,12 @@ public class ContentsActivity extends BaseActivity {
 
         }
     }
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mp != null) {
+            mp.stop();
+            mp.release();
+        }
+    }
 }

@@ -34,10 +34,10 @@ public class InfomationActivity extends BaseActivity {
     }
 
     private void init() {
-        info_btn_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        info_btn_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        info_btn_3.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
-        info_bottom.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textSize);
+        info_btn_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        info_btn_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        info_btn_3.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
+        info_bottom.setTextSize(TypedValue.COMPLEX_UNIT_SP, Const.textView);
     }
 
     public void onClickHome(View view) {
